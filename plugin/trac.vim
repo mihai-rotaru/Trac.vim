@@ -133,12 +133,23 @@ if !has("python")
 endif
 
 if filereadable($VIMRUNTIME."/plugin/trac.py")
-  pyfile $VIMRUNTIME/plugin/trac.py
+    pyfile $VIMRUNTIME/plugin/trac.py
 elseif filereadable($HOME."/.vim/plugin/trac.py")
-  pyfile $HOME/.vim/plugin/trac.py
+    pyfile $HOME/.vim/plugin/trac.py
+elseif exists('g:plugins_folder')
+    let s:tracpy1 = eval('g:plugins_folder') . '/Trac.vim/plugin/trac.py' 
+    let s:tracpy2 = eval('g:plugins_folder') . '/Trac/plugin/trac.py' 
+    if filereadable( s:tracpy1 )
+        exec "pyfile " . expand(s:tracpy1)
+    elseif filereadable( s:tracpy2 )
+        exec "pyfile " . expand(s:tracpy2)
+    else
+        call confirm('trac.vim: Unable to find trac.py. Place it in either your home vim directory or in the Vim runtime directory.', 'OK')
+        finish
+    endif
 else
-  call confirm('trac.vim: Unable to find trac.py. Place it in either your home vim directory or in the Vim runtime directory.', 'OK')
-  finish
+    call confirm('trac.vim: Unable to find trac.py. Place it in either your home vim directory or in the Vim runtime directory.', 'OK')
+    finish
 endif
 
 python import sys
